@@ -1,0 +1,1 @@
+Yardımcı Python fonksiyonları.

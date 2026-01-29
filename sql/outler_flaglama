@@ -1,0 +1,17 @@
+--Outlier'ları flagle (silmeden işaretle)
+CREATE OR REPLACE TABLE `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged` AS
+WITH stats AS (
+  SELECT 
+    APPROX_QUANTILES(total_activity, 100)[OFFSET(25)] AS q1,
+    APPROX_QUANTILES(total_activity, 100)[OFFSET(75)] AS q3
+  FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_cleaned`
+)
+SELECT 
+  t.*,
+  CASE 
+    WHEN t.total_activity > (s.q3 + 3 * (s.q3 - s.q1)) THEN 1
+    WHEN t.total_activity < (s.q1 - 3 * (s.q3 - s.q1)) THEN 1
+    ELSE 0
+  END AS is_outlier
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_cleaned` t
+CROSS JOIN stats s;

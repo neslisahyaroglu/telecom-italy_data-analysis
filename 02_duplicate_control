@@ -1,0 +1,10 @@
+--Duplicate (tekrar eden) kayıt kontrolü
+SELECT 
+  cell_id,
+  datetime,
+  country_code,
+  COUNT(*) AS tekrar_sayisi
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_cleaned`
+GROUP BY cell_id, datetime, country_code
+HAVING COUNT(*) > 1
+ORDER BY tekrar_sayisi DESC;

@@ -1,0 +1,48 @@
+-- ============================================================================
+-- BÖLÜM 3: VERİ KALİTESİ VE ANORMALLIK TESPİTİ
+-- ============================================================================
+
+-- 3.1: Negatif değer kontrolü (olmamalı)
+SELECT 
+  'sms_in' AS kolon,
+  COUNT(*) AS negatif_deger_sayisi,
+  MIN(sms_in) AS min_deger
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days`
+WHERE sms_in < 0
+UNION ALL
+SELECT 
+  'sms_out',
+  COUNT(*),
+  MIN(sms_out)
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days`
+WHERE sms_out < 0
+UNION ALL
+SELECT 
+  'call_in',
+  COUNT(*),
+  MIN(call_in)
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days`
+UNION ALL
+SELECT 
+  'call_out',
+  COUNT(*),
+  MIN(call_out)
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days`
+WHERE call_out < 0
+UNION ALL
+SELECT 
+  'internet',
+  COUNT(*),
+  MIN(internet)
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days`
+WHERE internet < 0;
+
+
+-- 3.5: Country code kontrol (sadece 39 olmalı - İtalya)
+SELECT 
+  country_code,
+  COUNT(*) AS kayit_sayisi,
+  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 2) AS yuzde
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days`
+GROUP BY country_code
+ORDER BY kayit_sayisi DESC;

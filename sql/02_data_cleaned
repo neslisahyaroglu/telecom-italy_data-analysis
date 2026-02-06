@@ -1,0 +1,24 @@
+-- 7.1: Temizlenmiş veri seti oluşturma (NULL'ları 0 ile değiştir)
+SELECT 
+  cell_id,
+  date,
+  time,
+  EXTRACT(HOUR FROM time) AS hour,
+  EXTRACT(DAYOFWEEK FROM date) AS day_of_week,
+  CASE 
+    WHEN EXTRACT(DAYOFWEEK FROM date) IN (1, 7) THEN 'Weekend'
+    ELSE 'Weekday'
+  END AS day_type,
+  country_code,
+  COALESCE(sms_in, 0) AS sms_in,
+  COALESCE(sms_out, 0) AS sms_out,
+  COALESCE(call_in, 0) AS call_in,
+  COALESCE(call_out, 0) AS call_out,
+  COALESCE(internet, 0) AS internet,
+  COALESCE(sms_in, 0) + COALESCE(sms_out, 0) + 
+  COALESCE(call_in, 0) + COALESCE(call_out, 0) + 
+  COALESCE(internet, 0) AS total_activity
+FROM `ny-project-480109.telecom_italy_data.sms_call_internet_all_days`
+WHERE cell_id IS NOT NULL
+  AND datetime IS NOT NULL
+  AND (sms_in IS NOT NULL OR sms_out IS NOT NULL OR call_in IS NOT NULL OR call_out IS NOT NULL OR internet IS NOT NULL);

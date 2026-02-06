@@ -1,0 +1,19 @@
+SELECT COUNT(*) AS tumu_sifir_satir_sayisi
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+WHERE
+  sms_in = 0
+  AND sms_out = 0
+  AND call_in = 0
+  AND call_out = 0
+  AND internet = 0;
+
+CREATE OR REPLACE TABLE `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged` AS
+SELECT *
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+WHERE NOT (
+  sms_in = 0
+  AND sms_out = 0
+  AND call_in = 0
+  AND call_out = 0
+  AND internet = 0
+);

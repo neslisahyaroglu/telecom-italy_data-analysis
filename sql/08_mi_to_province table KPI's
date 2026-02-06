@@ -1,0 +1,65 @@
+--Province bazlı yoğunluk
+--Her province için toplam kayıt sayısı (en basit ve en yaygın yoğunluk tanımı)
+
+SELECT
+  province_name,
+  COUNT(*) AS total_density
+FROM `ndn-project-485520.telecom_italy_data.mi_to_provinces_all_days`
+GROUP BY province_name
+ORDER BY total_density DESC;
+
+
+--Province bazlı günlük ortalama yoğunluk
+--Province başına günde ortalama kaç kayıt var
+
+SELECT
+  province_name,
+  COUNT(*) / COUNT(DISTINCT date) AS avg_daily_density
+FROM `ndn-project-485520.telecom_italy_data.mi_to_provinces_all_days`
+GROUP BY province_name
+ORDER BY avg_daily_density DESC;
+
+--Zaman bazlı yoğunluk – Saatlik
+--Günün hangi saatlerinde yoğunluk var
+
+SELECT
+  EXTRACT(HOUR FROM time) AS hour,
+  COUNT(*) AS density
+FROM `ndn-project-485520.telecom_italy_data.mi_to_provinces_all_days`
+GROUP BY hour
+ORDER BY hour;
+
+--Zaman bazlı yoğunluk – Günlük
+--Tarih bazında yoğunluk
+
+SELECT
+  date,
+  COUNT(*) AS daily_density
+FROM `ndn-project-485520.telecom_italy_data.mi_to_provinces_all_days`
+GROUP BY date
+ORDER BY date;
+
+--Province + Saat kırılımında yoğunluk
+--Hangi province, hangi saatte daha yoğun
+
+SELECT
+  province_name,
+  EXTRACT(HOUR FROM time) AS hour,
+  COUNT(*) AS density
+FROM `ndn-project-485520.telecom_italy_data.mi_to_provinces_all_days`
+GROUP BY province_name, hour
+ORDER BY province_name, hour;
+
+--Province bazlı giriş–çıkış ağırlıklı yoğunluk
+--cell2Province ve Province2cell kullanarak
+
+CREATE OR REPLACE TABLE `ndn-project-485520.telecom_italy_data.kpi2_province_based_inbound_outbound_weighted_density` AS
+SELECT
+  province_name,
+  SUM(cell2Province) AS inbound_density,
+  SUM(Province2cell) AS outbound_density,
+  SUM(cell2Province + Province2cell) AS total_density
+FROM `ndn-project-485520.telecom_italy_data.mi_to_provinces_all_days`
+GROUP BY province_name
+ORDER BY total_density DESC;
+

@@ -1,0 +1,98 @@
+--Province (cell_id) Bazlı Yoğunluk
+--Toplam trafik yoğunluğu (tüm zamanlar)
+
+SELECT
+    cell_id,
+    SUM(
+        COALESCE(sms_in, 0) +
+        COALESCE(sms_out, 0) +
+        COALESCE(call_in, 0) +
+        COALESCE(call_out, 0) +
+        COALESCE(internet, 0)
+    ) AS total_density
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+GROUP BY cell_id
+ORDER BY total_density DESC;
+
+
+--Province bazlı günlük yoğunluk
+
+SELECT
+    cell_id,
+    date,
+    SUM(
+        COALESCE(sms_in, 0) +
+        COALESCE(sms_out, 0) +
+        COALESCE(call_in, 0) +
+        COALESCE(call_out, 0) +
+        COALESCE(internet, 0)
+    ) AS daily_density
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+GROUP BY cell_id, date
+ORDER BY date, daily_density DESC;
+
+
+--Zaman Bazlı Yoğunluk
+--Saat bazlı yoğunluk (tüm province’ler)
+
+SELECT
+    hour,
+    SUM(
+        COALESCE(sms_in, 0) +
+        COALESCE(sms_out, 0) +
+        COALESCE(call_in, 0) +
+        COALESCE(call_out, 0) +
+        COALESCE(internet, 0)
+    ) AS hourly_density
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+GROUP BY hour
+ORDER BY hour;
+
+
+--Gün bazlı yoğunluk
+
+SELECT
+    date,
+    SUM(
+        COALESCE(sms_in, 0) +
+        COALESCE(sms_out, 0) +
+        COALESCE(call_in, 0) +
+        COALESCE(call_out, 0) +
+        COALESCE(internet, 0)
+    ) AS daily_density
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+GROUP BY date
+ORDER BY date;
+
+
+--Haftanın günü bazlı yoğunluk
+
+SELECT
+    day_of_week,
+    SUM(
+        COALESCE(sms_in, 0) +
+        COALESCE(sms_out, 0) +
+        COALESCE(call_in, 0) +
+        COALESCE(call_out, 0) +
+        COALESCE(internet, 0)
+    ) AS weekday_density
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+GROUP BY day_of_week
+ORDER BY day_of_week;
+
+
+--Province + Saat bazlı yoğunluk (ısı haritası için ideal)
+
+SELECT
+    cell_id,
+    hour,
+    SUM(
+        COALESCE(sms_in, 0) +
+        COALESCE(sms_out, 0) +
+        COALESCE(call_in, 0) +
+        COALESCE(call_out, 0) +
+        COALESCE(internet, 0)
+    ) AS density
+FROM `ndn-project-485520.telecom_italy_data.sms_call_internet_mi_all_days_flagged`
+GROUP BY cell_id, hour
+ORDER BY cell_id, hour;
